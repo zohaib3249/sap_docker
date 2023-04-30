@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>SAP Page</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+	<style>
+		.container {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			height: 100vh;
+		}
+
+		.input-container {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			margin-top: 20px;
+		}
+
+		.input-field {
+			margin-bottom: 10px;
+		}
+
+		.progress-bar {
+			width: 100%;
+			height: 20px;
+			border: 1px solid #ccc;
+			background-color: #fff;
+			position: relative;
+		}
+
+		.progress {
+			position: absolute;
+			top: 0;
+			left: 0;
+			height: 100%;
+			background-color: #0077ff;
+		}
+
+		.button {
+			padding: 10px 20px;
+			background-color: #0077ff;
+			color: #fff;
+			border: none;
+			cursor: pointer;
+			border-radius: 5px;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div>
+		
+			<h4 id="message">{{message}}</h4>
+			
+			
+		</div>
+		<div class="input-container">
+			
+			<form action="" method="post">
+                    {% csrf_token %}
+                <input type="text" placeholder="Table Name" class="input-field" name="table" required>
+                <input type="text" placeholder="Location" class="input-field" name="location" required>
+                <button type="submit" class="button">Start</button>
+            </form>
+			<div class="progress-bar" id="progress-bar" style={"color:green;background:green"}>
+				<div class="progress" id="progress"></div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		function checkProgress(tableId) {
+			$.ajax({
+			  url: "/get_file_status/" + tableId,
+			  type: "GET",
+			  success: function(data) {
+				
+				
+				 
+				  var progress = ((data.fetched_rows+data.fetched_cols) / (data.total_rows+data.number_of_column)) * 100;
+				  $("#progress").css("width", progress + "%");
+				  console.log(data,progress)
+				if (data.status == "Completed") {
+					
+					$("#message").html("table fetching done")
+					clearInterval(intervalId);
+				  }
+				  if (data.status == "Error") {
+					
+					$("#message").html("Something went wrong")
+					clearInterval(intervalId);
+				  }
+			  },
+			  error: function(xhr, status, error) {
+				// Handle any errors that occur during the API call here
+				console.error(error);
+			  }
+			});
+		  }
+		  var table_id = "{{table_id}}"
+		  if (table_id) {
+
+		
+			checkProgress(table_id);
+		
+		}
+		  
+	</script>
+</body>
+
+</html>
