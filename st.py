@@ -138,18 +138,17 @@ class SapExtractor():
             PASSWD = st.text_input(label="Password", type="password",key="Password",value=sap_conf.PASSWD if sap_conf else "")
             SAPROUTER = st.text_input(label="SAPROUTER",key="SapRouter",value=sap_conf.saprouter if sap_conf else "")
             if st.button(label="Save",key="create_save"):
-                
                 if ASHOST and SYSNR and USER and PASSWD:
                     SAPConfig.objects.create(django_user=user,ASHOST=ASHOST,saprouter = SAPROUTER,PASSWD =PASSWD,USER=USER,CLIENT=CLIENT,SYSNR=SYSNR)
                     st.success("Connection details saved successfully")
-                    
+                    st.empty()
+                    st.experimental_rerun()
                 else:
                     st.error("ASHOST,SYSNR,USER and PASSWD are required")
                 
-                st.experimental_rerun()
     def edit_widget(self,user,sap_conf=None):
-    
-        with st.expander("Edit Configuration Details"):
+        
+        with st.expander("Edit Configuration Details",expanded=False):
             ASHOST = st.text_input(label="Host",key="edit_Host",value=sap_conf.ASHOST if sap_conf else "")
             CLIENT = st.text_input(label="CLIENT",key="edit_CLIENT",value=sap_conf.CLIENT if sap_conf else "")
             SYSNR = st.text_input(label="SYSNR",key="edit_SYSNR",value=sap_conf.SYSNR if sap_conf else "")
@@ -158,15 +157,16 @@ class SapExtractor():
             SAPROUTER = st.text_input(label="SAPROUTER",key="edit_SapRouter",value=sap_conf.saprouter if sap_conf else "")
             if st.button(label="Save",key="edit_save"):
                 if ASHOST and SYSNR and USER and PASSWD:
-                    dd=SAPConfig.objects.update_or_create(django_user=user,id=sap_conf.id,defaults={"ASHOST":ASHOST,"saprouter":SAPROUTER,"PASSWD":PASSWD,"USER":USER,"CLIENT":CLIENT,"SYSNR":SYSNR})
-                
+                    dd,_=SAPConfig.objects.update_or_create(django_user=user,id=sap_conf.id,defaults={"ASHOST":ASHOST,"saprouter":SAPROUTER,"PASSWD":PASSWD,"USER":USER,"CLIENT":CLIENT,"SYSNR":SYSNR})
                     st.success("Connection details saved successfully")
+                    st.session_state.edit_expender = False
+
+                    self.refresh_conf()
+                    self.configurations = dd
                     
-
-
                 else:
                     st.error("ASHOST,SYSNR,USER and PASSWD are required")
-                st.experimental_rerun()
+                
 
     def main(self):
         st.write("# Login")
@@ -214,21 +214,23 @@ class SapExtractor():
             try:
                 conn = Connection(ashost=self.configurations.ASHOST, sysnr=self.configurations.SYSNR, user=self.configurations.USER, passwd=self.configurations.PASSWD,saprouter=self.configurations.saprouter)
                 st.success("Configuration server")
-            except:
+            except Exception as ex:
+            
                 st.error("invalid server configuration")
-        st.write("## Export Settings")
-        table_name = st.text_input("Table Name",value=s_data.get("table_name",""))
-        
+        if conn:
+            st.write("## Export Settings")
+            table_name = st.text_input("Table Name",value=s_data.get("table_name",""))
+            
 
-        file_format = st.selectbox("File Format", options=["csv", "xlsx", "json"])
-        btn =st.button("Fetch Data")
-        if btn:
-            if user and conn:
-                data = {"table_name":table_name}
-                st.session_state.data=data
-                gt_data_from_sap(table_name,conn)
-            else:
-                st.error("Please add working configuration")
+            file_format = st.selectbox("File Format", options=["csv", "xlsx", "json"])
+            btn =st.button("Fetch Data")
+            if btn:
+                if user and conn:
+                    data = {"table_name":table_name}
+                    st.session_state.data=data
+                    gt_data_from_sap(table_name,conn)
+                else:
+                    st.error("Please add working configuration")
         hide_st_style = """
                     <style>
                     #MainMenu {visibility: hidden;}
