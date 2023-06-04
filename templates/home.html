@@ -1,116 +1,459 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
+
 <head>
-	<title>SAP Page</title>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 
-	<style>
-		.container {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			justify-content: center;
-			height: 100vh;
-		}
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
-		.input-container {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			justify-content: center;
-			margin-top: 20px;
-		}
+    <style>
+        /* Add your CSS styles here */
+        .my_container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-		.input-field {
-			margin-bottom: 10px;
-		}
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
-		.progress-bar {
-			width: 100%;
-			height: 20px;
-			border: 1px solid #ccc;
-			background-color: #fff;
-			position: relative;
-		}
+        .form-group {
+            margin-bottom: 20px;
+        }
 
-		.progress {
-			position: absolute;
-			top: 0;
-			left: 0;
-			height: 100%;
-			background-color: #0077ff;
-		}
+        label {
+            font-weight: bold;
+            font-size: 120%;
 
-		.button {
-			padding: 10px 20px;
-			background-color: #0077ff;
-			color: #fff;
-			border: none;
-			cursor: pointer;
-			border-radius: 5px;
-		}
-	</style>
+
+        }
+
+        input[type="text"],
+        input[type="password"],
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            appearance: none;
+            background-color: #fff;
+
+
+        }
+
+
+
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+
+
+
+
+
+
+
+
+        .success-alert {
+            text-align: center;
+            background-color: #dff0d8;
+            color: #3c763d;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .download-button {
+            text-align: center;
+            display: none;
+        }
+
+        .btn:hover {
+            color: red;
+            border: 2px solid red;
+        }
+
+        #stop_btn,
+        .btn {
+            text-size-adjust: 100%;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            -webkit-font-smoothing: auto;
+            box-sizing: border-box;
+            font-size: inherit;
+            font-family: inherit;
+            overflow: visible;
+            text-transform: none;
+            appearance: button;
+            display: inline-flex;
+            -webkit-box-align: center;
+            align-items: center;
+            -webkit-box-pack: center;
+            justify-content: center;
+            font-weight: 400;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            margin: 0px;
+            line-height: 1.6;
+            color: inherit;
+            width: auto;
+            user-select: none;
+            background-color: rgb(255, 255, 255);
+            border: 1px solid rgba(49, 51, 63, 0.2);
+            cursor: pointer;
+        }
+
+        .navbar {
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        .navbar-nav.mr-auto {
+            margin-right: auto;
+        }
+
+        .navbar-nav.ml-auto {
+            margin-left: auto;
+        }
+
+        .accordion-item {
+            border: 1px solid rgba(0, 0, 0, 0.125);
+            border-radius: 1rem;
+            margin-bottom: 10px;
+
+        }
+
+        .accordion-collapse {
+            padding: 2rem;
+        }
+
+        #accordionFlushExample .accordion-item {
+
+
+            border-top: 0.10rem solid rgb(232, 232, 234);
+            border-bottom: 0.10rem solid rgb(188, 188, 192);
+            border-left: 0.10rem solid rgb(188, 188, 192);
+            border-right: 0.10rem solid rgb(188, 188, 192);
+
+        }
+    </style>
+    <title>SAP Data Management</title>
 </head>
+
 <body>
-	<div class="container">
-		<div>
-		
-			<h4 id="message">{{message}}</h4>
-			
-			
-		</div>
-		<div class="input-container">
-			
-			<form action="" method="post">
-                    {% csrf_token %}
-                <input type="text" placeholder="Table Name" class="input-field" name="table" required>
-                <input type="text" placeholder="Location" class="input-field" name="location" required>
-                <button type="submit" class="button">Start</button>
-            </form>
-			<div class="progress-bar" id="progress-bar" style={"color:green;background:green"}>
-				<div class="progress" id="progress"></div>
-			</div>
-		</div>
-	</div>
 
-	<script>
-		function checkProgress(tableId) {
-			$.ajax({
-			  url: "/get_file_status/" + tableId,
-			  type: "GET",
-			  success: function(data) {
-				
-				
-				 
-				  var progress = ((data.fetched_rows+data.fetched_cols) / (data.total_rows+data.number_of_column)) * 100;
-				  $("#progress").css("width", progress + "%");
-				  console.log(data,progress)
-				if (data.status == "Completed") {
-					
-					$("#message").html("table fetching done")
-					clearInterval(intervalId);
-				  }
-				  if (data.status == "Error") {
-					
-					$("#message").html("Something went wrong")
-					clearInterval(intervalId);
-				  }
-			  },
-			  error: function(xhr, status, error) {
-				// Handle any errors that occur during the API call here
-				console.error(error);
-			  }
-			});
-		  }
-		  var table_id = "{{table_id}}"
-		  if (table_id) {
 
-		
-			checkProgress(table_id);
-		
-		}
-		  
-	</script>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Sap Data Manager</a>
+
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">My Account</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Contact Us</a>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">{{request.user}}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    {% include "toast.html" %}
+    <div class="my_container">
+        <h1>SAP Data Management</h1>
+        <div class="mt-4"></div>
+        <select class="form-select" name="selected_configuration" aria-label="Default select example">
+            <option selected>Select Configuration</option>
+            {% for conf in configurations %}
+            <option value={{conf.id}}>{{conf}}</option>
+
+            {% endfor %}
+        </select>
+        <div class="mt-4"></div>
+        <div class="accordion accordion-flush" id="accordionFlushExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="flush-headingOne">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                        Add Configuration
+                    </button>
+                </h2>
+                <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne"
+                    data-bs-parent="#accordionFlushExample">
+                    <form method="POST" action="{% url 'add_view' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="add-host">Host:</label>
+                            {{ form.ASHOST }}
+                        </div>
+                        <div class="form-group">
+                            <label for="add-client">Client:</label>
+                            {{ form.CLIENT }}
+                        </div>
+                        <div class="form-group">
+                            <label for="add-sysnr">SYSNR:</label>
+                            {{ form.SYSNR }}
+                        </div>
+                        <div class="form-group">
+                            <label for="add-user">User:</label>
+                            {{ form.USER }}
+                        </div>
+                        <div class="form-group">
+                            <label for="add-password">Password:</label>
+                            <div class="password-input">
+                                {{ form.PASSWD }}
+                                <span class="password-toggle"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="add-routing">Routing:</label>
+                            {{ form.saprouter }}
+                        </div>
+                        <button type="submit" class="btn-success">Save</button>
+                    </form>
+
+                </div>
+            </div>
+            <div class="mt-4"></div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false"
+                        aria-controls="panelsStayOpen-collapseTwo">
+                        Edit Configuration
+                    </button>
+                </h2>
+                <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse"
+                    aria-labelledby="panelsStayOpen-headingTwo">
+                    <form id="edit_form" method="POST" action="">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="add-host">Host:</label>
+                            {{ edit_form.ASHOST }}
+                        </div>
+                        <div class="form-group">
+                            <label for="add-client">Client:</label>
+                            {{ edit_form.CLIENT }}
+                        </div>
+                        <div class="form-group">
+                            <label for="add-sysnr">SYSNR:</label>
+                            {{ edit_form.SYSNR }}
+                        </div>
+                        <div class="form-group">
+                            <label for="add-user">User:</label>
+                            {{ edit_form.USER }}
+                        </div>
+                        <div class="form-group">
+                            <label for="add-password">Password:</label>
+                            <div class="password-input">
+                                {{ edit_form.PASSWD }}
+                                <span class="password-toggle"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="add-routing">Routing:</label>
+                            {{ edit_form.saprouter }}
+                        </div>
+                        <button type="submit" class="btn-success">Save</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <div class="mt-3"></div>
+        <a href="" id="delete_configuration_id"><button type="button" class="btn btn-light">Delete</button></a>
+        <div class="mt-4"></div>
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">Table:</span>
+                <input type="text" class="form-control" name="table" placeholder="Enter Table Name" aria-label="table"
+                    aria-describedby="basic-addon1">
+            </div>
+            <input type="hidden" name="selected_configuration" id="selected_configuration">
+            <div class="mt-3"></div>
+            <button type="submit" class="btn btn-light" type="button">
+                Fetch Data
+            </button>
+        </form>
+        <div class="mt-5"></div>
+        {% if process_id %}
+        <div class="row" id="fetch_btn_spinner_row">
+            <div class="col-1" id="fetch_btn_spinner">
+                <div class="spinner-border text-success" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+            <div class="col-5">
+                <h4 id="feching_and_validating">Fetching Data</h4>
+            </div>
+        </div>
+        <div class="mt-5"></div>
+        <p id="table_informations">
+
+        </p>
+        <p id="message">
+
+        </p>
+
+        <div class="mprogress">
+            <div id="progressbar" class="progress-bar bg-info" role="progressbar" aria-valuenow="70" aria-valuemin="0"
+                aria-valuemax="100" style="width:0%">
+                <span class="sr-only" id="progressbar-text">0%</span>
+            </div>
+        </div>
+        <div class="mt-2"></div>
+        <a href="/stop_downloading/{{process_id}}" id="stop_btn"><button type="button" class="btn btn-light">Stop</button></a>
+        {% endif %}
+        <div id="">
+            <a href="" id="download_btn_atag"><button type="button" class="btn btn-light">Download</button></a>
+        </div>
+    </div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            $('.form-select').change(function () {
+                var selectedOption = $(this).val();
+                var formAction = '/edit_conf/' + selectedOption + '/';
+                $('#edit_form').attr('action', formAction);
+                $('#selected_configuration').val(selectedOption)
+                $('#delete_configuration_id').attr('href', '/delete_configurations/' + selectedOption + "/");
+                $.ajax({
+                    url: '/get_configurations/' + selectedOption + '/',
+                    success: function (response) {
+                        // Populate the form fields with the received data
+                        $('#edit_conf_ahost').val(response.ASHOST);
+                        $('#edit_conf_client').val(response.CLIENT);
+                        $('#edit_conf_sysnr').val(response.SYSNR);
+                        $('#edit_conf_user').val(response.USER);
+                        $('#edit_conf_password').val(response.PASSWD);
+                        $('#edit_conf_routing').val(response.saprouter);
+                    },
+
+                    error: function (error) {
+                        console.log('Error:', error);
+                    }
+                });
+            });
+        });
+       
+        function checkProgress(tableId) {
+            $.ajax({
+                url: "/get_file_status/" + tableId,
+                type: "GET",
+                success: function (data) {
+                    if(data.is_stopped)
+                    {
+                        $("#message").html("Fetching has been stopped")
+                       
+                        $("#progressbar").css("width", "100%");
+                        $("#progressbar-text").html("100%")
+                        $("#progressbar").removeClass("bg-info")
+                        $("#progressbar").addClass("bg-danger")
+                        $("#fetch_btn_spinner_row").css("display","none")
+                        $("#stop_btn").css("display","none")
+                        clearInterval(intervalId);
+                    }
+                    if (data.status == "InProgress") {
+
+                        var progress = parseInt((data.fetched_cols / data.number_of_column) * 100);
+                        $("#progressbar").css("width", progress + "%");
+                        $("#table_informations").html(data.success_message)
+                        $("#progressbar-text").html(progress+"%")
+                    }
+                    else if (data.status == "validate") {
+                        
+                        $("#feching_and_validating").html("Validating Data")
+                        var progress = parseInt((data.fetched_rows / data.total_rows) * 100);
+                        $("#progressbar").css("width", progress + "%");
+                        $("#table_informations").html(data.success_message)
+                        $("#progressbar-text").html(progress+"%")
+                        $("#progressbar").removeClass("bg-info")
+                        $("#progressbar").addClass("bg-success")
+                        $("#stop_btn").css("display","none")
+                        }
+                    
+                    else if (data.status == "Completed") {
+
+                        $("#message").html("table fetching done")
+                        clearInterval(intervalId);
+                        $("#fetch_btn_spinner_row").css("display","none")
+                        $("#stop_btn").css("display","none")
+                        $("#download_btn_atag").attr("href","/download/"+process_id)
+                        
+                    }
+                    if (data.status == "Error") {
+
+                        $("#message").html("Something went wrong")
+                            $("#message").html("Something went wrong")
+                        $("#progressbar").css("width", "100%");
+                        $("#progressbar-text").html("100%")
+                        $("#progressbar").removeClass("bg-info")
+                        $("#progressbar").addClass("bg-danger")
+                        $("#fetch_btn_spinner_row").css("display","none")
+                         $("#stop_btn").css("display","none")
+                        
+                            clearInterval(intervalId);
+                    }
+                    
+                },
+                error: function (xhr, status, error) {
+                    $("#message").html("Something went wrong")
+                    $("#progressbar").css("width", "100%");
+                    $("#progressbar")
+                    $("#progressbar").removeClass("bg-info")
+                    $("#progressbar").addClass("bg-warning")
+                    console.error(error);
+                }
+            });
+        }
+
+        var process_id = "{{process_id}}"
+        console.log(process_id)
+        if (process_id &&  process_id != "None") {
+             var intervalId = setInterval(function ()
+			 {
+			     checkProgress(process_id)
+            
+             },3000
+
+			 )
+            //checkProgress(process_id)
+
+        }
+    </script>
 </body>
 
 </html>

@@ -1,7 +1,0 @@
-python -m venv env
-
-.\env\Scripts\activate
-
-pip install -r .\re.txt
-
-python .\manage.py runserver

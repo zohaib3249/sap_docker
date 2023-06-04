@@ -1,0 +1,276 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Toast Notication</title>
+  <!-- font icons -->
+  <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+  <!-- css -->
+  <link rel="stylesheet" href="style.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+*{
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+}
+body{
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f2f2f2;
+  overflow: hidden;
+}
+.toast{
+  position: absolute;
+  top: 25px;
+  right: 30px;
+  border-radius: 6px;
+  background: #fff;
+  padding: 20px 35px 20px 25px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  border-left: 8px solid #40f467;
+  overflow: hidden;
+  transform: translateX(calc(100% + 30px));
+  transition: all 0.5s cubic-bezier(0.68, -0.55, 0.25, 1.35);
+}
+.toast.active{
+  transform: translateX(0);
+}
+.toast-content{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.toast-success{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 35px;
+  width: 35px;
+  background-color: #40f467;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 20px;
+}
+.toast-info{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 35px;
+  width: 35px;
+  background-color: #3f67cc;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 20px;
+}
+.toast-danger{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 35px;
+  width: 35px;
+  background-color: #8d3005;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 20px;
+}
+.toast-warning{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 35px;
+  width: 35px;
+  background-color: #f4ac40;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 20px;
+}
+
+.message{
+  display: flex;
+  flex-direction: column;
+  margin: 0 20px;
+}
+.message-text{
+  font-size: 20px;
+  font-weight: 600;
+}
+.text-1{
+  color: #333;
+}
+.text-2{
+  color: #666;
+  font-weight: 400;
+  font-size: 16px;
+}
+.toast-close{
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  padding: 5px;
+  cursor: pointer;
+  opacity: 0.7;
+}
+.toast-close:hover{
+  opacity: 1;
+}
+.progress{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background: #ddd;
+}
+.progress::before{
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  background-color: #40f467;
+}
+.progress.active::before{
+  animation: progress 5s linear forwards;
+}
+@keyframes progress {
+  100%{
+    right: 100%;
+  }
+}
+.toast-btn{
+  padding: 10px 40px;
+  font-size: 20px;
+  outline: none;
+  border: none;
+  background-color: #40f467;
+  color: #fff;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.toast-btn:hover{
+  background-color: #0fbd35;
+}
+.toast.warning {
+      border-left: 8px solid #f4b400;
+    }
+
+    .toast.info {
+      border-left: 8px solid #00aaff;
+    }
+
+    .toast.success {
+      border-left: 8px solid #40f467;
+    }
+
+    .toast.danger {
+      border-left: 8px solid #ff5349;
+    }
+
+    /* Add CSS styles for different progress colors */
+    .progress.success::before {
+      background-color: #40f467;
+    }
+
+    .progress.warning::before {
+      background-color: #f4b400;
+    }
+
+    .progress.info::before {
+      background-color: #00aaff;
+    }
+
+    .progress.danger::before {
+      background-color: #ff5349;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="toast">
+    <div class="toast-content">
+      <i class="toast-check"></i>
+      <div class="message">
+        <span class="message-text text-1">Success</span>
+        <span class="message-text text-2">Your changes have been saved</span>
+      </div>
+    </div>
+    <i class="uil uil-multiply toast-close"></i>
+    <div class="progress"></div>
+  </div>
+
+  <button class="toast-btn" onclick="showToast('Success', 'Your changes have been saved', 'success')">Show success toast</button>
+  <button class="toast-btn" onclick="showToast('Warning', 'This is a warning message', 'warning')">Show warning toast</button>
+  <button class="toast-btn" onclick="showToast('Info', 'This is an info message', 'info')">Show info toast</button>
+  <button class="toast-btn" onclick="showToast('Danger', 'An error occurred', 'danger')">Show danger toast</button>
+
+  <script>
+   
+    // Function to create and display a toast message with a specified color
+    function showToast(title, message, color, duration = 5000) {
+   
+      var toast = document.querySelector(".toast");
+      var toastCheck = document.querySelector(".toast-check");
+      var toastContent = document.querySelector(".toast-content");
+      var messageText1 = document.querySelector(".text-1");
+      var messageText2 = document.querySelector(".text-2");
+      var progress = document.querySelector(".progress");
+
+      toast.classList = "toast";
+      toast.classList.add(color);
+     
+      toastCheck.classList.add(getToastIcon(color));
+      messageText1.textContent = title;
+      messageText2.textContent = message;
+      toastContent.style.display = "flex";
+
+      toast.classList.add("active");
+      progress.classList = "progress";
+      progress.classList.add(color, "active");
+
+      setTimeout(function () {
+        toast.classList.remove("active");
+      }, duration);
+      setTimeout(function () {
+        progress.classList.remove("active");
+      }, duration + 300);
+    }
+
+    // Function to get the appropriate toast icon based on the color
+    function getToastIcon(color) {
+        
+      if (color === "warning") {
+        return "uil-exclamation-octagon";
+      } else if (color === "info") {
+        return "uil-info-circle";
+      } else if (color === "danger") {
+        return "uil-exclamation-triangle";
+      } else {
+        return "uil-check";
+      }
+    }
+    function get_ToastIcon_color(color) {
+        
+        if (color === "warning") {
+          return "toast-warning";
+        } else if (color === "info") {
+          return "toast-info";
+        } else if (color === "danger") {
+          return "toast-danger";
+        } else {
+          return "toast-success";
+        }
+      }
+  </script>
+</body>
+
+</html>

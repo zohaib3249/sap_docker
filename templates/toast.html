@@ -1,0 +1,353 @@
+
+    <!-- font icons -->
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        
+
+        
+
+        .toast_message {
+            position: absolute;
+            top: 25px;
+            right: 30px;
+            border-radius: 6px;
+            background: #fff;
+            padding: 20px 35px 20px 25px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            border-left: 8px solid #40f467;
+            overflow: hidden;
+            transform: translateX(calc(100% + 30px));
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.25, 1.35);
+        }
+
+        .toast_message.active {
+            transform: translateX(0);
+        }
+
+        .toast_message-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .toast_message-check-success {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 35px;
+            width: 35px;
+            background-color: #40f467;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 20px;
+        }
+        .toast_message-check-warning {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 35px;
+            width: 35px;
+            background-color: #9ff428;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 20px;
+        }
+        .toast_message-check-danger {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 35px;
+            width: 35px;
+            background-color: #770606;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 20px;
+        }
+        .toast_message-check-info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 35px;
+            width: 35px;
+            background-color: #344fa2;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 20px;
+        }
+
+       
+
+        .message-text {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .text-1 {
+            color: #333;
+        }
+
+        .text-2 {
+            color: #666;
+            font-weight: 400;
+            font-size: 16px;
+        }
+
+        .toast_message-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            padding: 5px;
+            cursor: pointer;
+            opacity: 0.7;
+        }
+
+        .toast_message-close:hover {
+            opacity: 1;
+        }
+
+        .progress_bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            width: 100%;
+            background: #ddd;
+        }
+
+        .progress_bar.info::before {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            height: 100%;
+            width: 100%;
+            background-color: #00aaff;
+        }
+
+        .progress_bar.danger::before {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            height: 100%;
+            width: 100%;
+            background-color: #ff5349;
+        }
+        .progress_bar.success::before {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            height: 100%;
+            width: 100%;
+            background-color: #40f467;
+        }
+        .progress_bar.warning::before {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            height: 100%;
+            width: 100%;
+            background-color: #f4b400;
+        }
+        .progress_bar.active::before {
+            animation: progress_bar 5s linear forwards;
+        }
+
+        @keyframes progress_bar {
+            100% {
+                right: 100%;
+            }
+        }
+
+        .toast_message-btn {
+            padding: 10px 40px;
+            font-size: 20px;
+            outline: none;
+            border: none;
+            background-color: #40f467;
+            color: #fff;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .toast_message-btn:hover {
+      background-color: #0fbd35;
+    }
+
+    .toast_message.warning {
+      border-left: 8px solid #f4b400;
+    }
+
+    .toast_message.info {
+      border-left: 8px solid #00aaff;
+    }
+
+    .toast_message.success {
+      border-left: 8px solid #40f467;
+    }
+
+    .toast_message.danger {
+      border-left: 8px solid #ff5349;
+    }
+
+    /* Add CSS styles for different progress_bar colors */
+    .progress_bar.success::before {
+      background-color: #40f467;
+    }
+
+    .progress_bar-warning::before {
+      background-color: #f4b400;
+    }
+
+    .progress_bar.info::before {
+      background-color: #00aaff;
+    }
+
+    .progress_bar.danger::before {
+      background-color: #ff5349;
+    }
+    .form-control,:hover {
+        border-color: #3fb950;
+      }
+      .form-control,.form-select:focus {
+            border-color: #3fb950 !important;
+           
+            
+          }
+    </style>
+
+
+    <div class="toast_message-container"></div>
+
+   
+    <script>
+        var toast_messages = []
+        // Function to create and display a toast_message message with a specified color
+        function showtoast_message(title, message, color, duration = 5000) {
+            if (color=="error")
+            {
+                color = "danger"
+            }
+            if (color=="debug")
+            {
+                color = "info"
+            }
+            if (message in toast_messages) {
+                return;
+            }
+            toast_messages.push(message);
+
+            var toast_messageContainer = document.querySelector(".toast_message-container");
+            var existingtoast_messages = document.querySelectorAll(".toast_message");
+            var toast_message = document.createElement("div");
+            var toast_messageCheck = document.createElement("i");
+            var toast_messageContent = document.createElement("div");
+            var messageText1 = document.createElement("span");
+            var messageText2 = document.createElement("span");
+            var progress_bar = document.createElement("div");
+            
+
+            toast_message.className = "toast_message";
+            toast_message.classList.add(color);
+
+            toast_messageCheck.className = "toast_message-check-"+color+" " + gettoast_messageIcon(color);
+            messageText1.className = "message-text text-1";
+            messageText2.className = "message-text text-2";
+
+            progress_bar.className = "progress_bar";
+            progress_bar.classList.add(color, "active");
+
+            messageText1.textContent = title;
+            messageText2.textContent = message;
+
+            toast_messageContent.className = "toast_message-content";
+            toast_messageContent.appendChild(toast_messageCheck);
+            toast_messageContent.appendChild(messageText1);
+            toast_messageContent.appendChild(messageText2);
+
+            toast_message.appendChild(toast_messageContent);
+            toast_message.appendChild(progress_bar);
+
+            toast_messageContainer.appendChild(toast_message);
+
+            var fector = 100;
+            if (existingtoast_messages.length == 0) {
+                fector = 0;
+            }
+            var margin = (existingtoast_messages.length) * fector; // Increase the margin for each toast_message
+            toast_message.style.marginTop = margin + "px";
+
+            setTimeout(function () {
+                toast_message.classList.add("active");
+                progress_bar.classList.add("active");
+            }, 100);
+
+            setTimeout(function () {
+                toast_message.classList.remove("active");
+                progress_bar.classList.remove("active");
+            }, duration + 300);
+
+            setTimeout(function () {
+                toast_message.remove();
+                toast_messages.pop();
+            }, duration + 600);
+        }
+
+        // Function to get the appropriate toast_message icon based on the color
+        function gettoast_messageIcon(color) {
+            if (color === "warning") {
+                return "uil-exclamation-octagon";
+            } else if (color === "info") {
+                return "uil-info-circle";
+            } else if (color === "danger") {
+                return "uil-exclamation-triangle";
+            } else {
+                return "uil-check";
+            }
+        }
+
+        // Function to get the appropriate progress_bar bar color based on the toast_message color
+        function gettoast_messageprogress_barColor(color) {
+            if (color === "warning") {
+                return "towarning";
+            } else if (color === "info") {
+                return "toast_message-info";
+            } else if (color === "danger") {
+                return "toast_message-danger";
+            } else {
+                return "toast_message-success";
+            }
+        }
+        function get_toast_messageIcon_color(color) {
+
+            if (color === "warning") {
+                return "toast_message-warning";
+            } else if (color === "info") {
+                return "toast_message-info";
+            } else if (color === "danger") {
+                return "toast_message-danger";
+            } else {
+                return "toast_message-success";
+            }
+        }
+    </script>
+
+    {% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <script>
+        showtoast_message("","{{ message }}","{{ message.tags }}")
+    </script>
+    
+    {% endfor %}
+</ul>
+{% endif %}
+
+
+

@@ -11,3 +11,4 @@ class SapSerializer(serializers.ModelSerializer):
     class Meta:
         model = SAPConfig
         fields = "__all__"
+

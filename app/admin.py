@@ -4,4 +4,5 @@ from .models import *
 
 
 admin.site.register(SapDownloading)
+admin.site.register(FileExtentions)
 admin.site.register(SAPConfig)
