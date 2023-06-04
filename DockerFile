@@ -1,7 +1,16 @@
-
+# Use the official Python image as the base image
 FROM python:3.9
 
+# Set the working directory inside the container
 WORKDIR /app
+
+# Set environment variables for SAPNWRFC_HOME, lib, and bin paths
+ENV SAPNWRFC_HOME=/sap/nwrfcsdk
+ENV LD_LIBRARY_PATH=$SAPNWRFC_HOME/lib
+ENV PATH=$SAPNWRFC_HOME/bin:$PATH
+
+# Copy the nwrfcsdk folder to the /sap/nwrfcsdk directory in the container
+COPY nwrfcsdk $SAPNWRFC_HOME
 
 # Copy the requirements file to the working directory
 COPY requirements.txt .
@@ -12,11 +21,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the entire project to the working directory
 COPY . .
 
-# Set environment variables
+# Set environment variables for Django
 ENV DJANGO_SETTINGS_MODULE=sap.settings
 ENV PYTHONUNBUFFERED=1
 
 # Expose port 8000 for the Django application
 EXPOSE 8000
 
+# Run the Django development server
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
