@@ -46,3 +46,6 @@ CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 
 #docker build -t sap .
 #docker run -p 8000:8000 sap
+
+
+# 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
