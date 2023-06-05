@@ -16,7 +16,7 @@ COPY nwrfcsdk $SAPNWRFC_HOME
 COPY requirements.txt .
 
 # Install the required Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
 # Copy the entire project to the working directory
 COPY . .
@@ -25,8 +25,24 @@ COPY . .
 ENV DJANGO_SETTINGS_MODULE=sap.settings
 ENV PYTHONUNBUFFERED=1
 
+# Install Redis server
+RUN apt-get update && apt-get install -y redis-server
+
 # Expose port 8000 for the Django application
 EXPOSE 8000
 
+# Install Flower for Celery monitoring
+RUN pip install flower
+
+# Start Redis server
+CMD ["redis-server"]
+
+# In another terminal, run Celery worker and Flower
+CMD ["celery", "-A", "sap", "worker", "--loglevel=info"]
+CMD ["flower", "--app=sap", "--broker=redis://localhost:6379/0"]
+
 # Run the Django development server
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+
+#docker build -t sap .
+#docker run -p 8000:8000 sap

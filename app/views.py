@@ -28,7 +28,6 @@ COL_BATCH_SIZE = 50
 
 from .serializers import *
 @login_required(login_url='/login') #redirect when user is not logged in
-
 def home(request,id=None):
     form = SapConfigurationFORM()
     edit_form = SapConfigurationEditFORM()
@@ -70,8 +69,6 @@ class  FThread(Thread):
     
         
         
-
-
     def run(self):
         print(f"Thread start:{self.thread_id}")
         table = self.table
@@ -151,21 +148,26 @@ def Download_table(conf,table:SapDownloading):
 
     try:
         conn = Connection(ashost=conf.ASHOST, sysnr=conf.SYSNR, user=conf.USER, passwd=conf.PASSWD,saprouter=conf.saprouter if conf.saprouter else "")
+        table.connection_status=True
+        table.save()
     except CommunicationError:
         table.error_message = "Could not connect to server"
         table.status = "Error"
         table.save()
         print("Could not connect to server.")
+        return
     except LogonError:
         table.error_message = "Could not log in. Wrong credentials."
         table.status = "Error"
         table.save()
         print("Could not log in. Wrong credentials?")
+        return
     except (ABAPApplicationError, ABAPRuntimeError):
        
         table.error_message = "An error occurred."
         table.status = "Error"
         table.save()
+        return
     except:
         table.success_message = f"Connection problem please add valid configuration"
         table.status = "Error"
